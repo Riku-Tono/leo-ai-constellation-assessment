@@ -1,0 +1,15 @@
+The original model files in this directory were restored without modification
+from zip/AI-satellite-constellation_GitHub_2026-10-05.zip on 2026-11-06.
+Archive SHA-256:
+b2458eb679388d0da8c4f5e8ab4a7c21084bd9d2e86e46af10dc95ec95a72c5c
+
+The two README files inside that archive remain in the archive as historical
+snapshots. The repository root README.md and ja/README.md are the current guides.
+models/README.md is a new navigation page, not an archived README copy.
+The archived numerical assumptions, CSVs and figure retain their original
+temperature criteria. See the current guides and google_update_20261106.py for
+the new comparisons; do not interpret historical 95 C margins as 90 C margins.
+
+google_update_20261106.py and the three google_update_*_20261106.csv files are
+new comparison material. The script imports thermal_structure_v04.py without
+running its main function or replacing the archived results.

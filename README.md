@@ -1,22 +1,22 @@
 # Preliminary Assessment of a Project Suncatcher–Style LEO AI Satellite Constellation
 
-[日本語](README.md) | English
+[日本語](ja/README.md) | English
 
 This project estimates **power, thermal, mass, and communications requirements for a common workload** in a low Earth orbit (LEO) satellite constellation combining solar generation, AI computing, and optical inter-satellite links.
 
 Using public information and explicit design assumptions, it compares continuous 100 kW AI computing on one satellite with synchronous training across 81 satellites. This is an independent study inspired by Google's Project Suncatcher; its results are not specifications or performance predictions for Google's spacecraft.
 
-**Status: preliminary sizing and conditional thermal balance assessment / Updated: 2026-10-05**
+**Status: preliminary sizing and conditional thermal balance assessment / Updated: 2026-11-06**
 
 ## Findings so far
 
 | Subject | Result under the stated assumptions | Assessment still needed |
 |---|---|---|
 | Continuous 100 kW computing on one satellite | Total power draw of 117.65 kW; solar array area of 381–463 m²; battery capacity of 17–71 kWh | Deployment, lifetime, and power balance throughout the orbit |
-| Spacecraft heat rejection | Effective radiating area of 215.8 m² at a mean surface temperature of 59.5°C and absorbed external heat flux of 45 W/m² | Actual attitude, external thermal environment, and local temperatures |
-| Mass | Solar arrays, batteries, and radiator panels subtotal 2.80–3.39 metric tonnes | Complete spacecraft mass, including computing, heat transport, structure, communications, and propulsion |
+| Spacecraft heat rejection | Effective radiating area of 215.8 m² at 59.5°C; **244.8 m² at 50°C**, an increase of **13.4%**, at the same 117.65 kW load and 45 W/m² external absorption | Actual attitude, external thermal environment, local temperatures, and a structure for the larger area |
+| Mass | Original 59.5°C case: solar arrays, batteries, and radiator panels subtotal 2.80–3.39 metric tonnes | Complete spacecraft mass, including computing, heat transport, structure, communications, and propulsion |
 | Single phase heat transport | Rigid pipe walls plus comparison fluid inside the pipes: 186.2 kg for the medium diameter case | Actual pumps, cold plates, joints, total pressure drop, and flight fluid |
-| Thermal assessment with assumed geometry | Improved structure with 500 W heat sources gives a junction temperature of 88.11°C at 45 W/m² external absorption, and 95.59°C at 100 W/m² | Actual interfaces, local heat generation, flow imbalance, and temperature margin |
+| Thermal assessment with assumed geometry | Improved structure with 500 W heat sources gives 88.11°C at 45 W/m² external absorption: **1.89 K below the new 90°C comparison criterion**, without a 5 K reserve; at 100 W/m² it reaches 95.59°C | Actual interfaces, HBM temperature, local heat generation, flow imbalance, and temperature margin |
 | Synchronous training across 81 satellites | Reference bandwidth at which communication time equals compute time: 9.84 Tbps per satellite, per direction | Link topology, terminal power and mass, and training performance |
 
 **The models identify conditions that admit a steady solution for rejecting 100 kW of heat. Feasibility of a complete flight spacecraft remains undetermined.** For a single satellite, the priorities are heat transport, the radiator environment, and component mass estimates. For a cluster, link architecture and formation flight require evaluation. Ranking the limiting subsystems also requires specifying the available capacity of each subsystem.
@@ -26,6 +26,10 @@ Using public information and explicit design assumptions, it compares continuous
 Google's research proposes space AI infrastructure using solar generation, TPUs, close formation flight, and optical links. The paper presents an example with 81 satellites at a mean altitude of 650 km and a cluster radius of 1 km, together with a **ground bench** demonstration of 800 Gbps unidirectional / 1.6 Tbps total bidirectional transmission. Approximately 10 Tbps is a link design target; the paper's 9.6 Tbps example is total bidirectional bandwidth. [Google research paper, v2](https://arxiv.org/html/2511.19468v2)
 
 Google's official announcement of October 1, 2026 confirms the prototype satellite's launch, established contact, and expected operation. It describes subsequent orbital data collection; it does not demonstrate continuous 100 kW operation or the thermal performance calculated here. [Google announcement](https://blog.google/innovation-and-ai/models-and-research/google-research/project-suncatcher-prototype/)
+
+On October 30, Google reported an onboard Gemma 4 inference response and identified interconnected twin satellites in 2027 as the next milestone. This establishes an initial orbital inference demonstration; sustained 100 kW operation and distributed training remain unverified. [Google orbital inference announcement](https://blog.google/innovation-and-ai/models-and-research/google-research/project-suncatcher-satellite-response/)
+
+[DCD's November 2 report](https://www.datacenterdynamics.com/en/news/googles-project-suncatcher-runs-first-workload-on-orbital-tpu-but-company-admits-space-data-centers-cost-100x-more-than-terrestrial/) describes four TPUs and approximately 1 kW of solar generation on the prototype. These are **reported prototype figures**, not a replacement for this study's assumed continuous AI load. Generation capacity alone does not establish continuous computing power, simultaneous chip operation, or thermal equilibrium.
 
 ## Scope and common assumptions
 
@@ -39,8 +43,8 @@ The five assessment areas are thermal management, power and orbital eclipse, int
 | Solar constant, cell efficiency, and implementation factor | 1,361 W/m², 0.30, 0.80 | Efficiency and implementation factor are assumptions |
 | Battery charge efficiency, discharge efficiency, depth of discharge, and reserve factor | 0.95, 0.95, 0.70, 1.20 | Assumptions |
 | Solar array areal mass / battery pack specific energy | 2.5 kg/m² / 140 Wh/kg | Suitability for this spacecraft has not been verified |
-| Junction temperature limit | 95°C | Scenario limit, not an actual TPU specification |
-| Initial mean radiator surface temperature | 332.65 K = 59.5°C | Initial value based on an assumed 35.5 K difference from the junction |
+| Junction temperature comparison | Historical: 95°C; added comparison: 90°C, or 85°C with a 5 K reserve | Joule describes an ideal junction temperature below 90°C; neither criterion is a qualified operating limit for the assumed hardware |
+| Mean radiator surface temperature | Historical: 332.65 K = 59.5°C; added case: 323.15 K = 50°C | The original value used an assumed 35.5 K junction-to-surface difference; 50°C follows an illustrative discussion in Joule, not a confirmed flight operating point |
 | Emissivity / absorbed external heat flux | 0.85 / 45 W/m² | Assumptions; 45 W/m² does not represent the worst LEO hot case |
 | Radiator panel areal mass | 8 kg/m² | The initial mass budget uses effective radiating area as the area basis |
 
@@ -66,7 +70,7 @@ The subsequent main loop model uses **183.44 m²** for the 100 kW computing load
 
 Computing hardware, HBM, boards, power conversion, heat acquisition and transport, deployment and central structures, attitude control, propulsion, communications, and radiation protection and redundancy have not been fully estimated. The earlier 3.92–4.75 t figure, obtained by adding a blanket 40% to the three component subtotal, is a historical comparison metric. It is not used as complete spacecraft mass or as a component mass budget.
 
-Assuming a 5 t launch mass ceiling, a 15% dry mass reserve, and zero propellant and adapter mass, the remaining allowance after subtracting the three components and 186.2 kg of rigid pipes plus internal fluid is approximately 1.36 t for high illumination and 0.77 t for the long eclipse case. These are conditional remaining allowances with propellant and other items omitted; they do not establish compliance with a 5 t limit. [Detailed mass budget](100kW単機_詳細質量予算.md)
+Assuming a 5 t launch mass ceiling, a 15% dry mass reserve, and zero propellant and adapter mass, the remaining allowance after subtracting the three components and 186.2 kg of rigid pipes plus internal fluid is approximately 1.36 t for high illumination and 0.77 t for the long eclipse case. These are conditional remaining allowances with propellant and other items omitted; they do not establish compliance with a 5 t limit. [Detailed mass budget](models/100kW単機_詳細質量予算.md)
 
 <details>
 <summary>Equations for reproducing power and area estimates</summary>
@@ -86,6 +90,20 @@ A_rad = Q_heat / q_net
 At 332.65 K, ε = 0.85, and q_abs = 45 W/m², net heat rejection is approximately 545.17 W/m². This initial approximation accounts for external absorption separately and omits the approximately 3 K space background term.
 
 </details>
+
+### Added 50°C radiation comparison (2026-11-06)
+
+The [Joule publication](https://www.cell.com/joule/fulltext/S2542-4351(26)00362-4) discusses radiator performance near 50°C, an ideal silicon junction temperature below 90°C, and HBM operation below approximately 90°C. **Radiator surface, junction, and HBM temperatures are separate quantities.** The added 50°C surface case retains the original total load, emissivity, and external absorption:
+
+| Quantity | Historical radiation case | Added radiation case |
+|---|---:|---:|
+| AI / total electrical power | 100 / 117.65 kW | 100 / 117.65 kW |
+| Mean radiator surface temperature | 59.5°C | 50°C |
+| Emissivity / absorbed external heat flux | 0.85 / 45 W/m² | 0.85 / 45 W/m² |
+| Net heat rejection per effective area | 545.17 W/m² | 480.59 W/m² |
+| Whole-spacecraft effective radiating area | 215.80 m² | **244.80 m² (+13.4%)** |
+
+This is a uniform-temperature radiation calculation, **not a rerun of the geometry model with enlarged panels**. It does not establish junction or HBM temperatures. The historical 2.80–3.39 t component subtotal and 5 t remaining allowances above belong to the original 59.5°C area assumptions; a 50°C spacecraft needs a new mass and structural budget. [Recalculation script](models/google_update_20261106.py) / [radiation results](models/google_update_radiation_20261106.csv).
 
 ## Single phase heat transport and thermal balance
 
@@ -113,11 +131,11 @@ The comparison uses water properties near 60°C, a 10 K fluid temperature change
 | Path pressure drop for straight pipes and target flow balancing | 59.579 kPa per loop |
 | Pump electrical power corresponding to the above | 0.354 kW for both loops combined |
 
-Cold plate and panel internal channels, entrances and exits, bends, joints, valves, filters, and other losses are separate items. The 0.354 kW value is not the required power of a complete pump system. The change from the initial v0.1 values of 62.8 kPa and 0.37 kW follows from a more detailed header flow model. [Piping model v0.2](100kW単機_単相熱輸送v0.2.md)
+Cold plate and panel internal channels, entrances and exits, bends, joints, valves, filters, and other losses are separate items. The 0.354 kW value is not the required power of a complete pump system. The change from the initial v0.1 values of 62.8 kPa and 0.37 kW follows from a more detailed header flow model. [Piping model v0.2](models/100kW単機_単相熱輸送v0.2.md)
 
 ### Screening with assumed panel thermal resistance
 
-Holding the main effective radiating area at 183.44 m², ε = 0.85, and external absorption at 45 W/m², varying the fluid-to-surface thermal resistance per unit area `R''` gives the following hot fluid temperatures required to reject 100 kW. This stage precedes assigning pump heat to the main loop.
+Holding the main effective radiating area at 183.44 m², ε = 0.85, and external absorption at 45 W/m², varying the fluid-to-surface thermal resistance per unit area `R''` gives the following hot fluid temperatures required to reject 100 kW. This historical screening uses the original 95°C comparison criterion and precedes assigning pump heat to the main loop.
 
 | Panel thermal resistance | Hot / cold fluid temperature | Remaining temperature difference up to a 95°C junction |
 |---:|---:|---:|
@@ -125,7 +143,7 @@ Holding the main effective radiating area at 183.44 m², ε = 0.85, and external
 | 0.020 m² K/W | 75.46 / 65.46°C | Approximately 19.54 K |
 | 0.030 m² K/W | 80.91 / 70.91°C | Approximately 14.09 K |
 
-The approximately 25 K allowance is close to the temperature limit; a design margin is still needed. The 10 K fluid inlet-to-outlet difference is not simply added to the earlier 35.5 K temperature budget. [Thermal balance screening](100kW単機_熱収支スクリーニングv0.1.md)
+The approximately 25 K allowance is close to the temperature limit; a design margin is still needed. The 10 K fluid inlet-to-outlet difference is not simply added to the earlier 35.5 K temperature budget. [Thermal balance screening](models/100kW単機_熱収支スクリーニングv0.1.md)
 
 ### Thermal model derived from geometry: current progress
 
@@ -140,13 +158,15 @@ The following junction temperatures result when each 10 kW cold plate serves **t
 | 150 W/m² | 109.03°C | 101.98°C |
 | 200 W/m² | 115.09°C | 108.04°C |
 
-![Absorbed external heat flux and modeled junction temperature](thermal_structure_v04.png)
+![Absorbed external heat flux and modeled junction temperature](models/thermal_structure_v04.png)
 
-For the 32 tube / 160 channel case, the external absorption boundary for the 90°C comparison target, which allows 5 K below the 95°C limit, is approximately 58.55 W/m². Even at 45 W/m², only approximately 1.89 K remains for unknown additional temperature rises after reserving that 5 K margin. With **ten 1 kW heat sources per module** and the same 40 mm × 40 mm source area and channel dimensions, this configuration reaches approximately 108.65°C. Results for the 500 W case cannot be transferred to the 1 kW case.
+Re-evaluating the unchanged 32 tube / 160 channel / 500 W source geometry against the added **90°C criterion** gives only **1.89 K** of allowance at 45 W/m² external absorption; at 100 W/m², the criterion is exceeded by **5.59 K**. A separate 5 K reserve below 90°C would require a modeled target of **85°C**, which this geometry does not meet at 45 W/m². The corresponding absorption boundaries are approximately **58.55 W/m² at 90°C** and **23.16 W/m² at 85°C**. The original interpretation of 90°C as a 5 K reserve below 95°C is retained only in the archived study notes and original plot. These calculations do not determine HBM temperature. [Junction comparison results](models/google_update_junction_20261106.csv) / [absorption boundaries](models/google_update_limits_20261106.csv).
+
+With **ten 1 kW heat sources per module** and the same 40 mm × 40 mm source area and channel dimensions, this configuration reaches approximately 108.65°C. Results for the 500 W case cannot be transferred to the 1 kW case.
 
 For the reference 20 tube / 120 channel structure, known pressure losses from piping, cold plate channels, and panel channels total 103.03 kPa per loop, with approximately 0.613 kW of pump electrical power for both loops combined. This heat is moved from the existing 17.65 kW auxiliary budget into the main loop: 100.613 kW of main heat plus 17.037 kW of remaining auxiliary heat equals 117.65 kW for the spacecraft. Pump heat is not added to that spacecraft total a second time.
 
-The model indicates that both a layout with low external absorption and an adequate local chip thermal path are needed. Changing the heat transfer correlation alone shifts the reference result by approximately 2.48 K, so feasibility near 95°C remains unresolved. End-of-life (EOL) optical properties, changing orbital and attitude-dependent heat inputs, flow imbalance, transients, freezing, boiling, and pressure qualification are further assessment areas. [External thermal environment and geometry model](100kW単機_外部熱環境と構造モデルv0.1.md)
+The model indicates that both a layout with low external absorption and an adequate local chip thermal path are needed. Changing the heat transfer correlation alone shifts the reference result by approximately 2.48 K, larger than the improved case's 1.89 K allowance below 90°C. Meeting that criterion with design margin remains unresolved. End-of-life (EOL) optical properties, changing orbital and attitude-dependent heat inputs, flow imbalance, transients, freezing, boiling, and pressure qualification are further assessment areas. [External thermal environment and geometry model](models/100kW単機_外部熱環境と構造モデルv0.1.md)
 
 **The communications case B assumption of 100 chips × 1 kW and the thermal geometry model assumption of 200 heat sources × 500 W are independent comparison cases. A unified spacecraft implementation connecting them has not yet been developed.**
 
@@ -200,7 +220,7 @@ fraction of step time spent computing = 1/(1+ρ)
 | 0.8 Tbps (ground bench rate) | 4 | 0.8 | 2.56 Tbps | 3.85 | 20.6% |
 | 5 Tbps (design assumption) | 4 | 0.8 | 16 Tbps | 0.62 | 61.9% |
 
-Adding link capacities does not by itself establish a workable topology, uncongested routes, or an achievable All-Reduce schedule. Bandwidth comparisons must use matching transmit and receive directions rather than comparing a unidirectional requirement with a bidirectional total. B2 is frozen at the definitions and sensitivity tables; B3, covering optical terminal power, mass, and heat generation, has not started. [Case B sensitivity analysis](<ケースB 感度分析(1).md>)
+Adding link capacities does not by itself establish a workable topology, uncongested routes, or an achievable All-Reduce schedule. Bandwidth comparisons must use matching transmit and receive directions rather than comparing a unidirectional requirement with a bidirectional total. B2 is frozen at the definitions and sensitivity tables; B3, covering optical terminal power, mass, and heat generation, has not started. [Case B sensitivity analysis](<models/ケースB 感度分析(1).md>)
 
 ### Cases A and C: daily data volume and ground stations
 
@@ -215,39 +235,47 @@ In an **illustrative scenario** with a 200 Gbps downlink, 600 seconds/day of con
 
 ## Documentation and reproduction
 
-The detailed notes are snapshots of the study at different stages and are **in Japanese**. Use v0.2 for representative piping results and geometry model v0.1 for structural and environmental sensitivities. Older piping values and area-based mass assumptions in the initial mass budget must not be combined as if they were complete spacecraft results for the latest structure.
+The detailed notes are snapshots of the study at different stages and are **in Japanese**. The original archive's model files are available in [`models/`](models/); their historical assumptions and results are preserved. Use v0.2 for representative piping results and geometry model v0.1 for structural and environmental sensitivities. Older piping values and area-based mass assumptions in the initial mass budget must not be combined as if they were complete spacecraft results for the latest structure.
 
 | Document | Contents |
 |---|---|
-| [Case B sensitivity analysis](<ケースB 感度分析(1).md>) | Global tokens, compute utilization, synchronization interval, satellite count, and link architecture; B2 frozen |
-| [Detailed mass budget](100kW単機_詳細質量予算.md) | Component TBDs, area and mass accounting boundaries, and comparison of single phase, two phase, and LHP/CPL approaches |
-| [Single phase heat transport v0.1](100kW単機_単相熱輸送v0.1.md) | Initial piping, diameter, and fluid temperature sensitivities; predecessor of v0.2 |
-| [Single phase heat transport v0.2](100kW単機_単相熱輸送v0.2.md) | Header flow, 20 paths, and failure operation requirements |
-| [Thermal balance screening](100kW単機_熱収支スクリーニングv0.1.md) | Temperature requirements derived from assumed panel thermal resistance |
-| [External thermal environment and geometry model](100kW単機_外部熱環境と構造モデルv0.1.md) | Thermal resistance derived from dimensions, pump heat, and all 40 cases |
+| [Case B sensitivity analysis](<models/ケースB 感度分析(1).md>) | Global tokens, compute utilization, synchronization interval, satellite count, and link architecture; B2 frozen |
+| [Detailed mass budget](models/100kW単機_詳細質量予算.md) | Component TBDs, area and mass accounting boundaries, and comparison of single phase, two phase, and LHP/CPL approaches |
+| [Single phase heat transport v0.1](models/100kW単機_単相熱輸送v0.1.md) | Initial piping, diameter, and fluid temperature sensitivities; predecessor of v0.2 |
+| [Single phase heat transport v0.2](models/100kW単機_単相熱輸送v0.2.md) | Header flow, 20 paths, and failure operation requirements |
+| [Thermal balance screening](models/100kW単機_熱収支スクリーニングv0.1.md) | Temperature requirements derived from assumed panel thermal resistance |
+| [External thermal environment and geometry model](models/100kW単機_外部熱環境と構造モデルv0.1.md) | Thermal resistance derived from dimensions, pump heat, and all 40 cases |
 
-Run the scripts with Python 3.10 or later from the directory containing the files. Numerical calculations and CSV output use the standard library. Regenerating the latest geometry model's PNG requires `matplotlib`.
+Run the following commands with Python 3.10 or later from the repository root. Numerical calculations and CSV output use the standard library. Regenerating the original geometry model's PNG requires `matplotlib`.
 
 ```bash
-python thermal_loop_v02.py
-python thermal_balance_v03.py
-python thermal_structure_v04.py
+python models/thermal_loop_v02.py
+python models/thermal_balance_v03.py
+python models/thermal_structure_v04.py
+python models/google_update_20261106.py
 ```
 
 To regenerate the figure as well:
 
 ```bash
 python -m pip install matplotlib
-python thermal_structure_v04.py
+python models/thermal_structure_v04.py
 ```
 
 CSV files are written beside their scripts, replacing results with the same filenames. Each script can run independently.
 
 | Code | Main outputs |
 |---|---|
-| [thermal_loop_v02.py](thermal_loop_v02.py) | [12 cases](thermal_loop_v02.csv), [20 paths](thermal_paths_v02.csv) |
-| [thermal_balance_v03.py](thermal_balance_v03.py) | [6 panel resistance cases](thermal_balance_v03.csv) |
-| [thermal_structure_v04.py](thermal_structure_v04.py) | [All 40 cases](thermal_structure_v04.csv), [environmental input boundaries](thermal_limits_v04.csv), structural breakdown CSVs, and PNG |
+| [thermal_loop_v02.py](models/thermal_loop_v02.py) | [12 cases](models/thermal_loop_v02.csv), [20 paths](models/thermal_paths_v02.csv) |
+| [thermal_balance_v03.py](models/thermal_balance_v03.py) | [6 panel resistance cases](models/thermal_balance_v03.csv) |
+| [thermal_structure_v04.py](models/thermal_structure_v04.py) | [All 40 cases](models/thermal_structure_v04.csv), [environmental input boundaries](models/thermal_limits_v04.csv), structural breakdown CSVs, and PNG |
+| [google_update_20261106.py](models/google_update_20261106.py) | [Radiation comparison](models/google_update_radiation_20261106.csv), [junction criteria](models/google_update_junction_20261106.csv), and [absorption boundaries](models/google_update_limits_20261106.csv); independent added cases |
+
+## Economic comparison: present reports and future assumptions
+
+[DCD reported on November 2](https://www.datacenterdynamics.com/en/news/googles-project-suncatcher-runs-first-workload-on-orbital-tpu-but-company-admits-space-data-centers-cost-100x-more-than-terrestrial/) that Google's energy executive Amanda Peterson Corio described present space data center costs as potentially up to 100 times those of building on Earth. This is a reported statement, without a published component budget or matched cost model here. It is **not used as a multiplier** for this study's mass, construction cost, or total cost of ownership.
+
+The [research paper's future comparison](https://www.cell.com/joule/fulltext/S2542-4351(26)00362-4) assumes launch pricing around $200/kg and compares launch cost annualized over spacecraft lifetime with terrestrial data center electricity cost. It does not establish equal total construction or operating costs. Present cost reports and that conditional future comparison have different scopes. This study has not yet established commercial competitiveness; complete spacecraft mass, manufacturing, launch, replacements, communications, and operations remain to be costed.
 
 ## Open questions and next steps
 
@@ -261,8 +289,11 @@ Liquid droplet radiators are a separate concept study and have not been integrat
 
 ## Main sources
 
+- [Google Research — Joule publication](https://www.cell.com/joule/fulltext/S2542-4351(26)00362-4): published system discussion and the illustrative temperature conditions used in the added comparison.
 - [Google Research — Towards a future space-based, highly scalable AI infrastructure system design, arXiv v2](https://arxiv.org/html/2511.19468v2): example formation, optical links, radiation testing, and research questions.
 - [Google — Project Suncatcher prototype satellite is in orbit, 2026-10-01](https://blog.google/innovation-and-ai/models-and-research/google-research/project-suncatcher-prototype/): prototype launch, established contact, and expected operation.
+- [Google — First response from the Project Suncatcher prototype, 2026-10-30](https://blog.google/innovation-and-ai/models-and-research/google-research/project-suncatcher-satellite-response/): initial orbital inference and the next twin-satellite milestone.
+- [DCD — Project Suncatcher's first workload and reported costs, 2026-11-02](https://www.datacenterdynamics.com/en/news/googles-project-suncatcher-runs-first-workload-on-orbital-tpu-but-company-admits-space-data-centers-cost-100x-more-than-terrestrial/): secondary reporting on prototype figures and the executive's current-cost remarks.
 - [Google Cloud — TPU7x (Ironwood)](https://docs.cloud.google.com/tpu/docs/tpu7x): public specifications, including peak BF16 performance.
 - [NASA — State-of-the-Art of Small Spacecraft Technology: Thermal Control](https://www.nasa.gov/smallsat-institute/sst-soa/thermal-control/): external heat inputs, radiation, heat transport, and thermal control.
 - [NASA — TBIRD 200 Gbps space-to-ground demonstration](https://www.nasa.gov/centers-and-facilities/ames/nasa-partners-achieve-fastest-space-to-ground-laser-comms-link/): demonstrated downlink.

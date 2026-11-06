@@ -1,0 +1,3 @@
+﻿case,ai_power_w,total_heat_w,radiator_temperature_c,emissivity,absorbed_w_m2,net_rejection_w_m2,effective_radiating_area_m2,area_increase_percent
+original_59p5C,100000.0,117647.05882352941,59.5,0.85,45.0,545.1749521183547,215.79688935890223,0.0
+comparison_50C,100000.0,117647.05882352941,50.0,0.85,45.0,480.5902538220324,244.79701343901024,13.438620068279338
