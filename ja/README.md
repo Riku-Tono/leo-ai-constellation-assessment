@@ -6,7 +6,7 @@
 
 公開情報と明示した設計仮定を用い、単機100 kWの連続AI計算から、81機の同期学習までを比較します。GoogleのProject Suncatcherを参考にした独立の検討であり、同社の実機仕様・性能予測ではありません。
 
-**状態：設計初期の概算・条件付き熱収支評価／更新：2026-11-06**
+**状態：設計初期の概算・条件付き熱収支評価／更新：2026-11-08**
 
 ## 現時点で分かったこと
 
@@ -30,6 +30,19 @@ Googleの研究は、太陽光発電、TPU、近接編隊、光通信を使う�
 11月2日のDCDは、試作機のTPU 4基・約1 kWの太陽光発電と、Google幹部による地上建設比で最大100倍という費用発言を報じています。これらは報道経由の情報として扱います。約1 kWは発電側の数値であり、本モデルの連続AI消費電力へ置き換えません。最大100倍という発言には、このモデルへ適用できる費用内訳・比較条件が公開されていないため、建設費や総所有コスト（TCO）へ掛ける係数にはしません。[DCD報道](https://www.datacenterdynamics.com/en/news/googles-project-suncatcher-runs-first-workload-on-orbital-tpu-but-company-admits-space-data-centers-cost-100x-more-than-terrestrial/)
 
 Joule掲載版の温度に関する記述を参考に、放熱面50°Cの例示ケースと接合部90°Cの比較基準を追加します。これらも実機の確定仕様とは区別します。[Joule掲載論文](https://www.cell.com/joule/fulltext/S2542-4351(26)00362-4)
+
+## Googleの実証と本評価の仮定の対応表
+
+| 本評価の仮定・試算 | Googleが公表した結果 | 検証できた範囲と残る課題 |
+|---|---|---|
+| ケースAの単機・衛星内推論 | 試作機のTPUでGemma 4を実行し、応答を地上へ返した。[軌道上試験](https://blog.google/innovation-and-ai/models-and-research/google-research/project-suncatcher-satellite-response/) | **軌道上で実証済み。** ケースAで想定する観測データの推論・選別は、この試験では未確認。 |
+| 地上リンク（Aは下り1～10 GB/日、Cは上下各10 TB/日） | 地上局からプロンプトを送り、衛星からの応答を受信した。[軌道上試験](https://blog.google/innovation-and-ai/models-and-research/google-research/project-suncatcher-satellite-response/) | **送受信は実証済み。** 想定の日量とサービス可用性は未検証。 |
+| 単機100 kWの連続AI計算と定常排熱（補機込み総電力117.65 kW） | 冷却技術を地上の熱真空槽で試験し、軌道上での熱試験を続ける方針を発表。[地上試験](https://blog.google/innovation-and-ai/models-and-research/google-research/google-project-suncatcher-facts/)・[軌道上試験の報告](https://blog.google/innovation-and-ai/models-and-research/google-research/project-suncatcher-satellite-response/) | **想定負荷では未検証。** 連続負荷をかけ、運転の持続と定常排熱を実測する必要がある。 |
+| 放熱面50°Cで放射有効面積244.8 m² | Joule論文では50°Cを放熱面温度の例として使用。[Joule掲載論文](https://www.cell.com/joule/fulltext/S2542-4351(26)00362-4) | **本評価の独立試算。** 面積は熱負荷・放射率・外部吸収の仮定から算出。想定負荷での放熱性能は未検証。 |
+| ケースB2の光リンク1本あたり片方向0.8 Tbps | 地上ベンチの短距離自由空間光リンクで片方向800 Gbps（双方向合計1.6 Tbps）を実証。[研究論文](https://arxiv.org/html/2511.19468v2) | **地上で実証済み。** 1リンクの比較値に根拠がある。軌道上の性能と複数リンクの同時運用は未検証。 |
+| ケースBの同期学習の帯域目安（9.84 Tbps/機・一方向） | 論文の9.6 Tbpsは双方向合計のリンク設計例。[研究論文](https://arxiv.org/html/2511.19468v2) | **本評価の独立試算。** 学習条件を仮定し、通信時間が計算時間と等しくなる帯域を算出。検証には対象の学習処理で通信時間と計算時間の実測が必要。 |
+| ケースBの81機編隊（平均高度650 km、クラスタ半径1 km） | 例示編隊と軌道解析を論文で提示。[研究論文](https://arxiv.org/html/2511.19468v2) | **論文の設計例。** この規模での編隊維持と同期学習は軌道上で未検証。 |
+| ケースBの衛星間接続 | Googleは2027年に相互接続した2機の試験を予定。[Google公式発表](https://blog.google/innovation-and-ai/models-and-research/google-research/project-suncatcher-satellite-response/) | **計画段階。** 2機での試験結果が、ケースBのリンク仮定を見直す材料になる。 |
 
 ## 評価対象と共通前提
 

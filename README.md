@@ -6,7 +6,7 @@ This project estimates **power, thermal, mass, and communications requirements f
 
 Using public information and explicit design assumptions, it compares continuous 100 kW AI computing on one satellite with synchronous training across 81 satellites. This is an independent study inspired by Google's Project Suncatcher; its results are not specifications or performance predictions for Google's spacecraft.
 
-**Status: preliminary sizing and conditional thermal balance assessment / Updated: 2026-11-06**
+**Status: preliminary sizing and conditional thermal balance assessment / Updated: 2026-11-08**
 
 ## Findings so far
 
@@ -30,6 +30,19 @@ Google's official announcement of October 1, 2026 confirms the prototype satelli
 On October 30, Google reported an onboard Gemma 4 inference response and identified interconnected twin satellites in 2027 as the next milestone. This establishes an initial orbital inference demonstration; sustained 100 kW operation and distributed training remain unverified. [Google orbital inference announcement](https://blog.google/innovation-and-ai/models-and-research/google-research/project-suncatcher-satellite-response/)
 
 [DCD's November 2 report](https://www.datacenterdynamics.com/en/news/googles-project-suncatcher-runs-first-workload-on-orbital-tpu-but-company-admits-space-data-centers-cost-100x-more-than-terrestrial/) describes four TPUs and approximately 1 kW of solar generation on the prototype. These are **reported prototype figures**, not a replacement for this study's assumed continuous AI load. Generation capacity alone does not establish continuous computing power, simultaneous chip operation, or thermal equilibrium.
+
+## What Google's results verify in this assessment
+
+| Assumption or estimate in this study | Google's published evidence | What it verifies and what remains open |
+|---|---|---|
+| Case A: inference onboard a single satellite | A TPU on the prototype ran Gemma 4 and returned a response. [Orbital test](https://blog.google/innovation-and-ai/models-and-research/google-research/project-suncatcher-satellite-response/) | **Demonstrated in orbit.** Inference and filtering on observation data, as assumed in Case A, remain unverified by this test. |
+| Ground links: Case A at 1–10 GB/day downlink and Case C at 10 TB/day in each direction | The team sent a prompt and received a response during a ground-station pass. [Orbital test](https://blog.google/innovation-and-ai/models-and-research/google-research/project-suncatcher-satellite-response/) | **Exchange demonstrated.** Daily throughput and service availability remain unverified. |
+| Continuous 100 kW AI computing and steady heat rejection on one satellite, with 117.65 kW total draw | Google tested its cooling technology in a thermal vacuum chamber and reported plans for further thermal testing in orbit. [Ground test](https://blog.google/innovation-and-ai/models-and-research/google-research/google-project-suncatcher-facts/) · [Orbital test update](https://blog.google/innovation-and-ai/models-and-research/google-research/project-suncatcher-satellite-response/) | **Unverified at the assumed load.** Sustained operation and steady heat rejection at these power levels require measurements under a continuous load. |
+| 244.8 m² of effective radiating area at a surface temperature of 50°C | The Joule paper uses 50°C as an illustrative radiator temperature. [Joule paper](https://www.cell.com/joule/fulltext/S2542-4351(26)00362-4) | **Independent sizing calculation.** The area follows from the assumed heat load, emissivity, and external absorption. The radiator's performance at that load remains unverified. |
+| Case B2: 0.8 Tbps in each direction for one optical link | A short free-space path carried 800 Gbps in each direction, or 1.6 Tbps combined, on a ground bench. [Research paper](https://arxiv.org/html/2511.19468v2) | **Demonstrated on the ground.** The result supports the single-link rate used in this comparison. In-orbit performance and simultaneous use of multiple links remain open. |
+| Case B: reference bandwidth of 9.84 Tbps per satellite, per direction | The paper gives a link design example of 9.6 Tbps combined in both directions. [Research paper](https://arxiv.org/html/2511.19468v2) | **Independent estimate.** 9.84 Tbps is the rate at which communication time equals compute time under this study's training assumptions. Validation requires measurements of communication and compute times for the workload. |
+| Case B: 81 satellites at an average altitude of 650 km within a cluster of 1 km radius | The paper presents an illustrative formation and orbital analysis. [Research paper](https://arxiv.org/html/2511.19468v2) | **Design example.** Maintaining the formation and running synchronous training at that scale remain unverified in orbit. |
+| Case B: connecting multiple satellites | Google lists two interconnected satellites as a milestone for 2027. [Google announcement](https://blog.google/innovation-and-ai/models-and-research/google-research/project-suncatcher-satellite-response/) | **Planned.** Results from the two-satellite test could inform the link assumptions in Case B. |
 
 ## Scope and common assumptions
 
